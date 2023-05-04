@@ -93,6 +93,25 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+        // Retrieve all menu items in a single query using eager loading
+        $parentMenuItems = MenuItem::with('children')->whereNull('parent_id')->get();
+
+        // Use a map function to recursively process each menu item and its children
+        return $parentMenuItems->map(function ($parentMenuItem) {
+            return $this->getChild($parentMenuItem);
+        });
+    }
+
+    private function getChild(MenuItem $parentMenuItem) {
+        // Convert the MenuItem to an array and add an empty "children" array
+        $menuItem = $parentMenuItem->toArray();
+        $menuItem['children'] = [];
+
+        // Use a map function to recursively process each child of the current MenuItem
+        $menuItem['children'] = $parentMenuItem->children->map(function ($child) {
+            return $this->getChild($child);
+        });
+
+        return $menuItem;
     }
 }
