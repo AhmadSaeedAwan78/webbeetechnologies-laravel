@@ -36,7 +36,89 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        // throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        
+        // Table for movies
+        Schema::create('movies', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+
+        // Table for showtimes
+        Schema::create('showtimes', function (Blueprint $table) {
+            $table->id();
+            $table->dateTime('start_time');
+            $table->unsignedBigInteger('movie_id');
+            $table->foreign('movie_id')->references('id')->on('movies')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        // Table for showrooms
+        Schema::create('showrooms', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        // Pivot table for showtimes and showrooms
+        Schema::create('showtime_showroom', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('showtime_id');
+            $table->unsignedBigInteger('showroom_id');
+            $table->foreign('showtime_id')->references('id')->on('showtimes')->onDelete('cascade');
+            $table->foreign('showroom_id')->references('id')->on('showrooms')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        // Table for seat types
+        Schema::create('seat_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->decimal('premium_percentage', 5, 2);
+            $table->timestamps();
+        });
+
+        // Table for seats
+        Schema::create('seats', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('showtime_id');
+            $table->unsignedBigInteger('seat_type_id');
+            $table->string('row');
+            $table->string('number');
+            $table->timestamps();
+
+            $table->foreign('showtime_id')->references('id')->on('showtimes')->onDelete('cascade');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
+            $table->unique(['showtime_id', 'row', 'number']);
+        });
+        
+        // Table for bookings
+        Schema::create('bookings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('showtime_id');
+            $table->unsignedBigInteger('seat_id');
+            $table->string('customer_name');
+            $table->timestamps();
+
+            $table->foreign('showtime_id')->references('id')->on('showtimes')->onDelete('cascade');
+            $table->foreign('seat_id')->references('id')->on('seats')->onDelete('cascade');
+            $table->unique(['showtime_id', 'seat_id']);
+        });
+
+        // Table for prices
+        Schema::create('prices', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('showtime_id');
+            $table->unsignedBigInteger('seat_type_id');
+            $table->decimal('price', 8, 2);
+            $table->timestamps();
+
+            $table->foreign('showtime_id')->references('id')->on('showtimes')->onDelete('cascade');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
+            $table->unique(['showtime_id', 'seat_type_id']);
+        });
     }
 
     /**
@@ -46,5 +128,13 @@ class CreateCinemaSchema extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('movies');
+        Schema::dropIfExists('showtimes');
+        Schema::dropIfExists('showrooms');
+        Schema::dropIfExists('showtime_showroom');
+        Schema::dropIfExists('seat_types');
+        Schema::dropIfExists('seats');
+        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('prices');
     }
 }
