@@ -19,42 +19,42 @@ class DatabaseSeeder extends Seeder
      */
 
     protected function seedMenu() {
-        $rootItem = MenuItem::create([
+        $rootItem = MenuItem::firstOrCreate([
             'name' => 'All events',
             'url' => '/events',
         ]);
 
-        $laraconItem = MenuItem::create([
+        $laraconItem = MenuItem::firstOrCreate([
             'name' => 'Laracon',
             'url' => '/events/laracon',
             'parent_id' => $rootItem->id
         ]);
 
-        MenuItem::create([
+        MenuItem::firstOrCreate([
             'name' => 'Illuminate your knowledge of the laravel code base',
             'url' => '/events/laracon/workshops/illuminate',
             'parent_id' => $laraconItem->id
         ]);
 
-        MenuItem::create([
+        MenuItem::firstOrCreate([
             'name' => 'The new Eloquent - load more with less',
             'url' => '/events/laracon/workshops/eloquent',
             'parent_id' => $laraconItem->id
         ]);
 
-        $reactconItem = MenuItem::create([
+        $reactconItem = MenuItem::firstOrCreate([
             'name' => 'Reactcon',
             'url' => '/events/reactcon',
             'parent_id' => $rootItem->id
         ]);
 
-        MenuItem::create([
+        MenuItem::firstOrCreate([
             'name' => '#NoClass pure functional programming',
             'url' => '/events/reactcon/workshops/noclass',
             'parent_id' => $reactconItem->id
         ]);
 
-        MenuItem::create([
+        MenuItem::firstOrCreate([
             'name' => 'Navigating the function jungle',
             'url' => '/events/reactcon/workshops/jungle',
             'parent_id' => $reactconItem->id
@@ -64,11 +64,11 @@ class DatabaseSeeder extends Seeder
     protected function seedEvents() {
         $date = (new Carbon())->subYear()->setDay(21);
 
-        $lcon1 = Event::create([
+        $lcon1 = Event::firstOrCreate([
             'name' => 'Laravel convention '.$date->year
         ]);
 
-        Workshop::create([
+        Workshop::firstOrCreate([
             'start' => $date->clone()->setMonth(2)->setHour(10),
             'end' => $date->clone()->setMonth(2)->setHour(16),
             'name' => 'Illuminate your knowledge of the laravel code base',
@@ -77,36 +77,36 @@ class DatabaseSeeder extends Seeder
 
         $date = (new Carbon())->addYears(1);
 
-        $lcon2 = Event::create([
+        $lcon2 = Event::firstOrCreate([
             'name' => 'Laravel convention '.$date->year
         ]);
 
-        Workshop::create([
+        Workshop::firstOrCreate([
             'start' => $date->clone()->setMonth(10)->setHour(10),
             'end' => $date->clone()->setMonth(10)->setHour(16),
             'name' => 'The new Eloquent - load more with less',
             'event_id' => $lcon2->id
         ]);
 
-        Workshop::create([
+        Workshop::firstOrCreate([
             'start' => $date->clone()->setMonth(11)->setHour(10),
             'end' => $date->clone()->setMonth(11)->setHour(17),
             'name' => 'AutoEx - handles exceptions 100% automatic',
             'event_id' => $lcon2->id
         ]);
 
-        $rcon = Event::create([
+        $rcon = Event::firstOrCreate([
             'name' => 'React convention '.$date->year
         ]);
 
-        Workshop::create([
+        Workshop::firstOrCreate([
             'start' => $date->clone()->setMonth(8)->setHour(10),
             'end' => $date->clone()->setMonth(8)->setHour(18),
             'name' => '#NoClass pure functional programming',
             'event_id' => $rcon->id
         ]);
 
-        Workshop::create([
+        Workshop::firstOrCreate([
             'start' => $date->clone()->setMonth(11)->setHour(9),
             'end' => $date->clone()->setMonth(11)->setHour(17),
             'name' => 'Navigating the function jungle',
